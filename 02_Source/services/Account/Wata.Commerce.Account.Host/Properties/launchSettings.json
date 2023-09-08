@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Wata.Commerce.Account.Host": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:56367;http://localhost:56368"
+    }
+  }
+}

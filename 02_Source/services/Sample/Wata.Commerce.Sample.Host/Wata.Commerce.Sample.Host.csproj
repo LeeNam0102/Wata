@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>de94972b-9f9d-4015-830b-246526320f33</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
+		<PrivateAssets>all</PrivateAssets>
+		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wata.Commerce.Sample.Data\Wata.Commerce.Sample.Data.csproj" />
+    <ProjectReference Include="..\Wata.Commerce.Sample.Business\Wata.Commerce.Sample.Business.csproj" />
+    <ProjectReference Include="..\Wata.Commerce.Sample.Api\Wata.Commerce.Sample.Api.csproj" />
+    <ProjectReference Include="..\Wata.Commerce.Sample.MigrationSqlServer\Wata.Commerce.Sample.MigrationSqlServer.csproj" />
+  </ItemGroup>
+
+</Project>
