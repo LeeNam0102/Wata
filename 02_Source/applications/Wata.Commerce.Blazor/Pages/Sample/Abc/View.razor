@@ -1,0 +1,202 @@
+@page "/sample/abc/view/{AbcID:int}"
+
+@using Wata.Commerce.Common.Component;
+@using Wata.Commerce.Common.Helpers;
+@using Wata.Commerce.Common.Objects;
+@using Wata.Commerce.Sample.Module.Services;
+@using Wata.Commerce.Sample.Module.Models.Abc;
+
+@inherits PageBase
+@inject IAbcService _abcService
+@inject IPageHelper PageHelper
+@inject EditSuccess EditSuccessState
+
+@if (NotFound && !Loading)
+{
+    <div class="alert alert-warning">A abc with that id doesn't exist.</div>
+}
+else
+{
+    @if (Abc is null || Loading)
+    {
+        <div class="alert alert-info">Loading...</div>
+    }
+    else
+    {
+        <h1>AbcID @Abc.AbcID</h1>
+        <MudGrid>
+            <MudItem xs="4" Class="d-flex justify-end">AbcID:</MudItem>
+            <MudItem xs="8">@Abc.AbcID</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">Name:</MudItem>
+            <MudItem xs="8">@Abc.Name</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">CreateDate:</MudItem>
+            <MudItem xs="8">@Abc.CreateDate</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">UpdateDate:</MudItem>
+            <MudItem xs="8">@Abc.UpdateDate</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">CreateBy:</MudItem>
+            <MudItem xs="8">@Abc.CreateBy</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">UpdateBy:</MudItem>
+            <MudItem xs="8">@Abc.UpdateBy</MudItem>
+            @if (EditSuccess)
+            {
+                <MudItem xs="12" Class="alert alert-success">Successfully updated the abc.</MudItem>
+            }
+            <MudItem xs="12">
+                <a class="btn btn-primary" title="Go Back" href="/sample/abc/@PageHelper.Page">
+                    🔙 Back to Grid
+                </a>
+            
+            
+            @if (!Deleted)
+            {
+                    <a class="btn btn-primary" href="sample/abc/edit/@Abc.AbcID" title="Edit">Edit</a>
+
+                @if (!ShowConfirmation)
+                {
+                        <button class="btn btn-danger" @onclick="@(() => { ShowConfirmation = true; EditSuccess = false; })">Delete</button>
+                }
+                else
+                {
+                    <MudItem xs="12">
+                        <DeletePrompt Confirmation="@(async result => await ConfirmAsync(result))" />
+                    </MudItem>
+                }
+            }
+            else
+            {
+                <MudItem xs="12" Class="btn btn-danger">🚫 This item has been deleted.</MudItem>
+            }
+            </MudItem>
+        </MudGrid>
+    }
+}
+
+@code {
+    /// <summary>
+    /// Tracking of asynchronous calls.
+    /// </summary>
+    private bool Loading;
+
+    /// <summary>
+    /// Id from route of abc.
+    /// </summary>
+    [Parameter]
+    public int AbcID { get; set; }
+
+    /// <summary>
+    /// Navigation check.
+    /// </summary>
+    private int _lastAbcID;
+
+    /// <summary>
+    /// True with redirect from successful edit.
+    /// </summary>
+    [Parameter]
+    public bool EditSuccess { get; set; }
+
+    /// <summary>
+    /// Abc entity.
+    /// </summary>
+    private AbcModel? Abc { get; set; }
+
+    /// <summary>
+    /// Set to true when not found.
+    /// </summary>
+    private bool NotFound = false;
+
+    /// <summary>
+    /// Set to true when delete is requested.
+    /// </summary>
+    private bool ShowConfirmation = false;
+
+    /// <summary>
+    /// Set to true when delete is successful
+    /// </summary>
+    private bool Deleted = false;
+
+    /// <summary>
+    /// Navigated
+    /// </summary>
+    /// <returns>Task</returns>
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_lastAbcID != AbcID)
+        {
+            EditSuccess = EditSuccessState.Success;
+            EditSuccessState.Success = false;
+            _lastAbcID = AbcID;
+            await LoadAbcAsync();
+        }
+        await base.OnParametersSetAsync();
+    }
+
+    /// <summary>
+    /// Confirm deletion
+    /// </summary>
+    /// <param name="result">True when user confirmed</param>
+    /// <returns>Task</returns>
+    private async Task ConfirmAsync(bool result)
+    {
+        if (result)
+        {
+            await DeleteAsync();
+        }
+        else
+        {
+            ShowConfirmation = false;
+            EditSuccess = false;
+        }
+    }
+
+    /// <summary>
+    /// Loads the abc
+    /// </summary>
+    /// <returns>Task</returns>
+    private async Task LoadAbcAsync()
+    {
+        if (Loading)
+        {
+            return; //avoid concurrent requests
+        }
+
+        NotFound = false;
+        Abc = null;
+
+        Loading = true;
+
+        Abc = await _abcService.GetAbcAsync(AbcID, true);
+
+        if (Abc is null)
+        {
+            NotFound = true;
+        }
+
+        Loading = false;
+    }
+
+    /// <summary>
+    /// Deletes the abc.
+    /// </summary>
+    /// <returns>Task</returns>
+    private async Task DeleteAsync()
+    {
+        if (Loading)
+        {
+            return; // avoid concurrent requests
+        }
+
+        Loading = true;
+
+        if (await _abcService.DeleteAbcAsync(AbcID) > 0)
+        {
+            Loading = false;
+            Deleted = true;
+        }
+        else
+        {
+            Loading = false;
+            // show not found
+            await LoadAbcAsync();
+        }
+    }
+}

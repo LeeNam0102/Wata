@@ -1,0 +1,28 @@
+﻿@using Microsoft.Extensions.Logging
+@using System.Net;
+@using Wata.Commerce.Common.Objects;
+
+@inherits PageBase
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+@inject NavigationManager Navigation
+@inject ILogger<AuthBase> Logger
+@attribute [Authorize]
+
+@code {
+    protected string? currentUsername { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        AuthenticationState authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        if (authstate != null && authstate.User.Identity.IsAuthenticated)
+        {
+            currentUsername = authstate.User.Identity.Name;
+        }
+        //else
+        //{
+        //    Navigation.NavigateTo($"/Account/Login");
+        //}
+    }
+
+}

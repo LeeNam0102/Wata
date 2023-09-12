@@ -64,7 +64,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{AF4E64
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wata.Commerce.Common.Module", "modules\Common\Wata.Commerce.Account.Module\Wata.Commerce.Common.Module.csproj", "{7BC132B2-F22F-4D32-ACAC-A414170D7B54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wata.Commerce.Common.Component", "modules\Common\Wata.Commerce.Common.Component\Wata.Commerce.Common.Component.csproj", "{1DD730DA-7EE0-4B73-AB5F-5613881EF73F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wata.Commerce.Common.Component", "modules\Common\Wata.Commerce.Common.Component\Wata.Commerce.Common.Component.csproj", "{1DD730DA-7EE0-4B73-AB5F-5613881EF73F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wata.Commerce.Identity", "applications\Wata.Commerce.Identity\Wata.Commerce.Identity.csproj", "{69D2D1F7-EC65-45AD-964E-C10DE9D0E3F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wata.Commerce.Blazor", "applications\Wata.Commerce.Blazor\Wata.Commerce.Blazor.csproj", "{FE5A022D-EF46-4ABC-85DE-530926E62495}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Account", "Account", "{412AF16B-AE1E-43E1-B384-BCF199F63A2F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wata.Commerce.Account.Module", "modules\Account\Wata.Commerce.Account.Module\Wata.Commerce.Account.Module.csproj", "{3D129DAF-D8B0-4EED-980A-7AC3C81CA9F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -168,6 +176,18 @@ Global
 		{1DD730DA-7EE0-4B73-AB5F-5613881EF73F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DD730DA-7EE0-4B73-AB5F-5613881EF73F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DD730DA-7EE0-4B73-AB5F-5613881EF73F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69D2D1F7-EC65-45AD-964E-C10DE9D0E3F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69D2D1F7-EC65-45AD-964E-C10DE9D0E3F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69D2D1F7-EC65-45AD-964E-C10DE9D0E3F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69D2D1F7-EC65-45AD-964E-C10DE9D0E3F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE5A022D-EF46-4ABC-85DE-530926E62495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE5A022D-EF46-4ABC-85DE-530926E62495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE5A022D-EF46-4ABC-85DE-530926E62495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE5A022D-EF46-4ABC-85DE-530926E62495}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D129DAF-D8B0-4EED-980A-7AC3C81CA9F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D129DAF-D8B0-4EED-980A-7AC3C81CA9F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D129DAF-D8B0-4EED-980A-7AC3C81CA9F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D129DAF-D8B0-4EED-980A-7AC3C81CA9F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -201,6 +221,10 @@ Global
 		{AF4E64EB-DF22-41B8-B7FA-CE73D6602211} = {3183E4DC-86AB-4C1F-AE23-81F6C5341BC8}
 		{7BC132B2-F22F-4D32-ACAC-A414170D7B54} = {AF4E64EB-DF22-41B8-B7FA-CE73D6602211}
 		{1DD730DA-7EE0-4B73-AB5F-5613881EF73F} = {AF4E64EB-DF22-41B8-B7FA-CE73D6602211}
+		{69D2D1F7-EC65-45AD-964E-C10DE9D0E3F2} = {C5D83D42-A3FC-4076-BB1A-EB496E882407}
+		{FE5A022D-EF46-4ABC-85DE-530926E62495} = {C5D83D42-A3FC-4076-BB1A-EB496E882407}
+		{412AF16B-AE1E-43E1-B384-BCF199F63A2F} = {3183E4DC-86AB-4C1F-AE23-81F6C5341BC8}
+		{3D129DAF-D8B0-4EED-980A-7AC3C81CA9F9} = {412AF16B-AE1E-43E1-B384-BCF199F63A2F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C59D58A8-62BC-474C-8864-8F26D0FF7892}

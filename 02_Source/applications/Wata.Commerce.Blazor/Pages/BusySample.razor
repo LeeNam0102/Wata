@@ -1,0 +1,24 @@
+@page "/busy-sample"
+@using Wata.Commerce.Common.Component;
+@inherits PageBase
+
+<h3>PageBusy: @IsBusy() | @BusyStatus</h3>
+
+@code {
+    private string BusyStatus{ get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await Busy(true);
+        BusyStatus = "Busy waiting";
+        await Task.Run(async ()=>
+        {
+            //function must use await can effect busy!
+            Thread.Sleep(3000);
+        });
+        await Busy(false);
+        BusyStatus = "End busy";
+    }
+}

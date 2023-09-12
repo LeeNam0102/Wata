@@ -1,0 +1,19 @@
+@page "/modal-sample"
+@using Blazored.Modal.Services;
+@inject IModalService modal
+
+<div>
+    <button @onclick="@ShowAbout">Show Modal</button>
+</div>
+
+@code {
+    protected void ShowAbout()
+    {
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                ActivateFocusTrap = false
+            };
+        modal.Show<About>("About", parameters, options);
+    }
+}

@@ -1,0 +1,34 @@
+﻿@using Wata.Commerce.Common.Helpers;
+
+<MudGrid Class="mt-2">
+    <MudItem xs="12" Class="d-flex align-center justify-end">
+        Page @PageHelper.Page of @PageHelper.PageCount:
+        showing @PageHelper.PageItems of
+        @PageHelper.TotalItemCount items.
+        <a disabled="@(IsLoading || !PageHelper.HasPrev)"
+            class="btn btn-primary @IsDisabled(PageHelper.HasPrev)"
+            href="@(Url + PageHelper.PrevPage)">
+            Previous
+        </a>
+        &nbsp;
+        <a disabled="@(IsLoading || !PageHelper.HasNext)"
+            class="btn btn-primary @IsDisabled(PageHelper.HasNext)"
+            href="@(Url + PageHelper.NextPage)">
+            Next
+        </a>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public string Url { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsLoading { get; set; }
+
+    [Parameter]
+    public IPageHelper PageHelper { get; set; }
+
+    private string IsDisabled(bool condition) =>
+        !IsLoading && condition ? "" : "disabled";
+}

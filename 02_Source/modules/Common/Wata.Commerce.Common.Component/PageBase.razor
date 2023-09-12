@@ -1,0 +1,53 @@
+﻿@using Wata.Commerce.Common.Component.Services;
+@*@inject IJSRuntime JSRuntime*@
+@inject SpinnerService _spinnerService
+
+@code {
+    private int _busyRequestCount = 0;
+    private bool _isBusy { get; set; }
+
+    protected async Task Busy(bool isBusy)
+    {
+        if (isBusy)
+        {
+            _busyRequestCount++;
+            _isBusy = true;
+            _spinnerService.Show();
+        }
+        else
+        {
+            if (_busyRequestCount > 0) _busyRequestCount--;
+
+            if (_busyRequestCount == 0)
+            {
+                _isBusy = false;
+                _spinnerService.Hide();
+            }
+        }
+    }
+
+    protected bool IsBusy()
+    {
+        return _isBusy;
+    }
+    /*
+    protected int WindowHeight { get; set; }
+    protected int WindowWidth { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (WindowWidth.Equals(0) || WindowHeight.Equals(0))
+        {
+            var dimension = await JSRuntime.InvokeAsync<WindowDimension>("getWindowDimensions");
+            WindowHeight = dimension.Height;
+            WindowWidth = dimension.Width;
+        }
+    }
+
+    protected class WindowDimension
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+    }
+    */
+}

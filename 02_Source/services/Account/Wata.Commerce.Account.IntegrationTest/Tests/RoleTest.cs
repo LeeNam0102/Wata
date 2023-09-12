@@ -24,10 +24,10 @@ namespace Wata.Commerce.Account.IntegrationTest.Tests
         public async Task Insert_Success()
         {
             RoleRequestDto requestDto = new RoleRequestDto();
-			requestDto.Id = "Id";
-			requestDto.ConcurrencyStamp = "ConcurrencyStamp";
-			requestDto.Name = "Name";
-			requestDto.NormalizedName = "NormalizedName";
+            requestDto.Id = "Id";
+            requestDto.ConcurrencyStamp = "ConcurrencyStamp";
+            requestDto.Name = "Name";
+            requestDto.NormalizedName = "NormalizedName";
 
             var result = await _roleClient.InsertAsync(requestDto);
 
@@ -38,10 +38,10 @@ namespace Wata.Commerce.Account.IntegrationTest.Tests
         public async Task Update_Success()
         {
             RoleRequestDto requestDto = new RoleRequestDto();
-			requestDto.Id = "Id";
-			requestDto.ConcurrencyStamp = "ConcurrencyStamp";
-			requestDto.Name = "Name";
-			requestDto.NormalizedName = "NormalizedName";
+            requestDto.Id = "Id";
+            requestDto.ConcurrencyStamp = "ConcurrencyStamp";
+            requestDto.Name = "Name";
+            requestDto.NormalizedName = "NormalizedName";
 
             var result = await _roleClient.UpdateAsync(requestDto);
 
@@ -67,8 +67,7 @@ namespace Wata.Commerce.Account.IntegrationTest.Tests
         [TestMethod]
         public async Task GetList_Success()
         {
-            var result = await _roleClient.GetListAsync(new RoleFilterDto() { IsOutputTotal = true});
-
+            var result = await _roleClient.GetListAsync(new RoleFilterDto() { IsOutputTotal = true });
             Assert.IsTrue(result.TotalRecords > 0);
             Assert.AreEqual(result.Data.Count, result.TotalRecords);
         }

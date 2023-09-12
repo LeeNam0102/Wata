@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+	  <TargetFramework>net7.0</TargetFramework>
+	  <Nullable>enable</Nullable>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <UserSecretsId>8ec33ddd-770b-4827-9cc6-9c6c3081c9f9</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pages\Account\**" />
+    <Compile Remove="Pages\Sample\**" />
+    <Content Remove="Pages\Account\**" />
+    <Content Remove="Pages\Sample\**" />
+    <EmbeddedResource Remove="Pages\Account\**" />
+    <EmbeddedResource Remove="Pages\Sample\**" />
+    <None Remove="Pages\Account\**" />
+    <None Remove="Pages\Sample\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="compilerconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="compilerconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
+    <None Include="Pages\About.razor" />
+    <None Include="Pages\AuthSample.razor" />
+    <None Include="Pages\BusySample.razor" />
+    <None Include="Pages\Error.cshtml" />
+    <None Include="Pages\Index.razor" />
+    <None Include="Pages\ModalSample.razor" />
+    <None Include="Pages\_Host.cshtml" />
+    <None Include="Pages\_Layout.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.Modal" Version="7.1.0" />
+	<PackageReference Include="MudBlazor" Version="6.7.0" />
+	<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\modules\Account\Wata.Commerce.Account.Module\Wata.Commerce.Account.Module.csproj" />
+    <ProjectReference Include="..\..\modules\Common\Wata.Commerce.Common.Component\Wata.Commerce.Common.Component.csproj" />
+    <ProjectReference Include="..\..\modules\Sample\Wata.Commerce.Sample.Module\Wata.Commerce.Sample.Module.csproj" />
+    <ProjectReference Include="..\..\shared\Wata.Commerce.Common\Wata.Commerce.Common.csproj" />
+  </ItemGroup>
+
+</Project>

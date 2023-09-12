@@ -1,0 +1,90 @@
+@using Microsoft.AspNetCore.Components.Forms;
+@using Wata.Commerce.Account.Module.Models.Role;
+
+<h1>@Mode role</h1>
+<hr />
+@if (Role is not null)
+{
+    <EditForm Model="@Role"
+              OnInvalidSubmit="(async () => await HandleSubmitAsync(false))"
+              OnValidSubmit="(async () => await HandleSubmitAsync(true))">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <MudGrid Class="d-flex align-center">
+			<MudItem xs="12">
+			     <MudTextField Label="ConcurrencyStamp" @bind-Value="Role.ConcurrencyStamp"></MudTextField>
+			     <ValidationMessage For="@(() => Role.ConcurrencyStamp)" />
+			</MudItem>
+			<MudItem xs="12">
+			     <MudTextField Label="Name" @bind-Value="Role.Name"></MudTextField>
+			     <ValidationMessage For="@(() => Role.Name)" />
+			</MudItem>
+			<MudItem xs="12">
+			     <MudTextField Label="NormalizedName" @bind-Value="Role.NormalizedName"></MudTextField>
+			     <ValidationMessage For="@(() => Role.NormalizedName)" />
+			</MudItem>
+            <MudItem xs="6" Class="d-flex justify-end">
+                <MudButton Disabled="@Busy" @onclick="CancelAsync" Variant="Variant.Filled" Color="Color.Default">Cancel</MudButton>
+            </MudItem>
+            <MudItem xs="6">
+                <MudButton Disabled="@Busy" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+}
+@code {
+    /// <summary>
+    /// Let parent handle result of validation.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> ValidationResult { get; set; }
+
+    /// <summary>
+    /// Let parent handle what to do on cancel.
+    /// </summary>
+    [Parameter]
+    public EventCallback CancelRequest { get; set; }
+
+    /// <summary>
+    /// <c>True</c> if add mode.
+    /// </summary>
+    [Parameter]
+    public bool IsAdd { get; set; }
+
+    /// <summary>
+    /// The <see cref="Role"/> to upsert.
+    /// </summary>
+    [Parameter]
+    public RoleModel? Role { get; set; }
+
+    /// <summary>
+    /// Prevent multiple asynchronous operations at the same time.
+    /// </summary>
+    [Parameter]
+    public bool Busy { get; set; }
+
+    /// <summary>
+    /// Mode.
+    /// </summary>
+    private string Mode => IsAdd ? "Add" : "Edit";
+
+    /// <summary>
+    /// Ask to cancel.
+    /// </summary>
+    /// <returns>A <see cref="Task"/>.</returns>
+    private Task CancelAsync()
+    {
+        return CancelRequest.InvokeAsync(null);
+    }
+
+    /// <summary>
+    /// Handle form submission request.
+    /// </summary>
+    /// <param name="isValid"><c>True</c> when field validation passed.</param>
+    /// <returns>A <see cref="Task"/>.</returns>
+    private Task HandleSubmitAsync(bool isValid)
+    {
+        return ValidationResult.InvokeAsync(isValid);
+    }
+}

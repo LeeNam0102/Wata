@@ -1,0 +1,145 @@
+@using Wata.Commerce.Common.Component;
+@using Wata.Commerce.Account.Module.Models.Role;
+
+@if (CurrentRole is not null)
+{
+    <tr>
+        <td>
+            <MudLink Href="@("/account/role/edit/" + CurrentRole.Id)">
+                <MudIcon Color="Color.Default" Icon="@Icons.Material.Filled.Edit" Title="Edit" />
+            </MudLink>
+            @if (CanDelete)
+            {
+                <MudIcon Color="Color.Default" @onclick="DeleteRequestAsync" Icon="@Icons.Material.Filled.Delete" Title="Delete" />
+            }
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @Id
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @ConcurrencyStamp
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @Name
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @NormalizedName
+             </a>
+        </td>
+    </tr>
+    @if (DeleteConfirmation)
+    {
+        <tr>
+            <td colspan="5">
+                <DeletePrompt Confirmation="ConfirmAsync" />
+            </td>
+        </tr>
+    }
+}
+@code {
+    private RoleModel _currentRole = new RoleModel();
+
+    /// <summary>
+    /// The <see cref="Role"/> being rendered.
+    /// </summary>
+    [Parameter]
+    public RoleModel CurrentRole
+    {
+        get => _currentRole;
+        set
+        {
+            if (value is not null && !value.Equals(_currentRole))
+            {
+                _currentRole = value;
+                DeleteConfirmation = false;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Event to raise when a role delete is requested.
+    /// </summary>
+    [Parameter]
+    public EventCallback DeleteRole { get; set; }
+
+    /// <summary>
+    /// Overall wrapper of functionality.
+    /// </summary>
+    [CascadingParameter]
+    public GridWrapper? Wrapper { get; set; }
+
+    /// <summary>
+    /// Returns <c>true</c> if conditions for delete are met.
+    /// </summary>
+    private bool CanDelete => !DeleteConfirmation &&
+    (Wrapper?.DeleteRequestId == 0 ||
+    Wrapper?.DeleteRequestId == CurrentRole?.Id);
+
+    /// <summary>
+    /// Navigate to view.
+    /// </summary>
+    private string ViewLink => $"account/role/view/{CurrentRole?.Id}";
+
+    /// <summary>
+    /// Confirm the delete.
+    /// </summary>
+    private bool DeleteConfirmation { get; set; }
+
+    /// <summary>
+    /// Called based on confirmation.
+    /// </summary>
+    /// <param name="confirmed"><c>True</c> when confirmed</param>
+    /// <returns>A <see cref="Task"/>.</returns>
+    private async Task ConfirmAsync(bool confirmed)
+    {
+        if (confirmed)
+        {
+            await DeleteAsync();
+        }
+        else
+        {
+            DeleteConfirmation = false;
+
+            if (Wrapper is not null)
+            {
+                await Wrapper.DeleteRequested.InvokeAsync(0);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Set delete to true.
+    /// </summary>
+    private async Task DeleteRequestAsync()
+    {
+        if (Wrapper?.DeleteRequestId == 0)
+        {
+            DeleteConfirmation = true;
+            await Wrapper.DeleteRequested.InvokeAsync(CurrentRole.Id);
+        }
+    }
+
+    /// <summary>
+    /// Deletes the <see cref="Role"/>.
+    /// </summary>
+    /// <returns>A <see cref="Task"/>.</returns>
+    private Task DeleteAsync()
+    {
+        return DeleteRole.InvokeAsync(this);
+    }
+
+        private string Id => CurrentRole.Id;
+
+        private string ConcurrencyStamp => CurrentRole.ConcurrencyStamp;
+
+        private string Name => CurrentRole.Name;
+
+        private string NormalizedName => CurrentRole.NormalizedName;
+}

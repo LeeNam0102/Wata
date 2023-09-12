@@ -1,0 +1,148 @@
+@page "/account/role/edit/{Id:string}"
+
+@using Wata.Commerce.Common.Helpers;
+@using Wata.Commerce.Common.Component;
+@using Wata.Commerce.Common.Objects;
+@using Wata.Commerce.Account.Module.Services;
+@using Wata.Commerce.Account.Module.Models.Role;
+
+@inherits PageBase
+@inject IRoleService _roleService
+@inject NavigationManager navigationManager
+@implements IDisposable
+
+@inject NavigationManager Navigation
+@inject IPageHelper PageHelper
+@inject EditSuccess EditSuccessState
+
+@if (Role is null && !Busy)
+{
+    <p>Could not find role with id @Id.</p>
+}
+else
+{
+    <RoleForm Busy="@Busy" Role="@Role"
+                 IsAdd="false"
+                 CancelRequest="Cancel"
+                 ValidationResult="@(async (success) => await ValidationResultAsync(success))" />
+}
+
+@if (Error)
+{
+    <br />
+    <div class="alert alert-danger">Failed to update the role (@ErrorMessage).</div>
+}
+
+@code {
+    /// <summary>
+    /// Id of role to edit
+    /// </summary>
+    [Parameter]
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Role being edited
+    /// </summary>
+    private RoleModel? Role { get; set; } = new RoleModel();
+
+    /// <summary>
+    /// Avoid concurrent requests
+    /// </summary>
+    private bool Busy; 
+
+    /// <summary>
+    /// An error occurred in the update
+    /// </summary>
+    private bool Error;
+
+    /// <summary>
+    /// Error message
+    /// </summary>
+    private string ErrorMessage = string.Empty;
+
+    /// <summary>
+    /// Start it up
+    /// </summary>
+    /// <returns>Task</returns>
+    #region snippet2
+    protected override async Task OnInitializedAsync()
+    {
+        Busy = true;
+
+        try
+        {
+            Role = await _roleService.GetRoleAsync(Id);
+        }
+        finally
+        {
+            Busy = false;
+        }
+
+        await base.OnInitializedAsync();
+    }
+    #endregion
+
+    /// <summary>
+    /// Result of form validation
+    /// </summary>
+    /// <param name="success">Success when model is valid</param>
+    /// <returns>Task</returns>
+    private async Task ValidationResultAsync(bool success)
+    {
+        if (Busy)
+        {
+            return;
+        }
+
+        if (!success)
+        {
+            // still need to edit model
+            Error = false;
+            return;
+        }
+
+        Busy = true; // async
+        try
+        {
+            if (await _roleService.UpdateRoleAsync(Role) > 0)
+            {
+                EditSuccessState.Success = true;
+                // go to view to see the record
+                Navigation.NavigateTo($"/account/role/view/{Role.Id}");
+            }
+            else
+            {
+                EditSuccessState.Success = false;
+                Error = true;
+                Busy = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            EditSuccessState.Success = false;
+            // unknown exception
+            Error = true;
+            ErrorMessage = ex.Message;
+            Busy = false;
+        }
+    }
+
+    /// <summary>
+    /// Bail out!
+    /// </summary>
+    private void Cancel()
+    {
+        Busy = true;
+        Navigation.NavigateTo($"/account/role/{PageHelper.Page}");
+    }
+
+    /// <summary>
+    /// Implement <see cref="IDisposable"/>.
+    /// </summary>
+    #region snippet1
+    public void Dispose()
+    {
+        //Dispose something
+    }
+    #endregion
+}

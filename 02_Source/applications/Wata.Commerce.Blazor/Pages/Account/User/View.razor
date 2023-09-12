@@ -1,0 +1,220 @@
+@page "/account/user/view/{Id:string}"
+
+@using Wata.Commerce.Common.Component;
+@using Wata.Commerce.Common.Helpers;
+@using Wata.Commerce.Common.Objects;
+@using Wata.Commerce.Account.Module.Services;
+@using Wata.Commerce.Account.Module.Models.User;
+
+@inherits PageBase
+@inject IUserService _userService
+@inject IPageHelper PageHelper
+@inject EditSuccess EditSuccessState
+
+@if (NotFound && !Loading)
+{
+    <div class="alert alert-warning">A user with that id doesn't exist.</div>
+}
+else
+{
+    @if (User is null || Loading)
+    {
+        <div class="alert alert-info">Loading...</div>
+    }
+    else
+    {
+        <h1>Id @User.Id</h1>
+        <MudGrid>
+            <MudItem xs="4" Class="d-flex justify-end">Id:</MudItem>
+            <MudItem xs="8">@User.Id</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">AccessFailedCount:</MudItem>
+            <MudItem xs="8">@User.AccessFailedCount</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">ConcurrencyStamp:</MudItem>
+            <MudItem xs="8">@User.ConcurrencyStamp</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">Email:</MudItem>
+            <MudItem xs="8">@User.Email</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">EmailConfirmed:</MudItem>
+            <MudItem xs="8">@User.EmailConfirmed</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">LockoutEnabled:</MudItem>
+            <MudItem xs="8">@User.LockoutEnabled</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">LockoutEnd:</MudItem>
+            <MudItem xs="8">@User.LockoutEnd</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">NormalizedEmail:</MudItem>
+            <MudItem xs="8">@User.NormalizedEmail</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">NormalizedUserName:</MudItem>
+            <MudItem xs="8">@User.NormalizedUserName</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">PasswordHash:</MudItem>
+            <MudItem xs="8">@User.PasswordHash</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">PhoneNumber:</MudItem>
+            <MudItem xs="8">@User.PhoneNumber</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">PhoneNumberConfirmed:</MudItem>
+            <MudItem xs="8">@User.PhoneNumberConfirmed</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">SecurityStamp:</MudItem>
+            <MudItem xs="8">@User.SecurityStamp</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">TwoFactorEnabled:</MudItem>
+            <MudItem xs="8">@User.TwoFactorEnabled</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">UserName:</MudItem>
+            <MudItem xs="8">@User.UserName</MudItem>
+            @if (EditSuccess)
+            {
+                <MudItem xs="12" Class="alert alert-success">Successfully updated the user.</MudItem>
+            }
+            <MudItem xs="12">
+                <a class="btn btn-primary" title="Go Back" href="/account/user/@PageHelper.Page">
+                    🔙 Back to Grid
+                </a>
+            
+            
+            @if (!Deleted)
+            {
+                    <a class="btn btn-primary" href="account/user/edit/@User.Id" title="Edit">Edit</a>
+
+                @if (!ShowConfirmation)
+                {
+                        <button class="btn btn-danger" @onclick="@(() => { ShowConfirmation = true; EditSuccess = false; })">Delete</button>
+                }
+                else
+                {
+                    <MudItem xs="12">
+                        <DeletePrompt Confirmation="@(async result => await ConfirmAsync(result))" />
+                    </MudItem>
+                }
+            }
+            else
+            {
+                <MudItem xs="12" Class="btn btn-danger">🚫 This item has been deleted.</MudItem>
+            }
+            </MudItem>
+        </MudGrid>
+    }
+}
+
+@code {
+    /// <summary>
+    /// Tracking of asynchronous calls.
+    /// </summary>
+    private bool Loading;
+
+    /// <summary>
+    /// Id from route of user.
+    /// </summary>
+    [Parameter]
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Navigation check.
+    /// </summary>
+    private int _lastId;
+
+    /// <summary>
+    /// True with redirect from successful edit.
+    /// </summary>
+    [Parameter]
+    public bool EditSuccess { get; set; }
+
+    /// <summary>
+    /// User entity.
+    /// </summary>
+    private UserModel? User { get; set; }
+
+    /// <summary>
+    /// Set to true when not found.
+    /// </summary>
+    private bool NotFound = false;
+
+    /// <summary>
+    /// Set to true when delete is requested.
+    /// </summary>
+    private bool ShowConfirmation = false;
+
+    /// <summary>
+    /// Set to true when delete is successful
+    /// </summary>
+    private bool Deleted = false;
+
+    /// <summary>
+    /// Navigated
+    /// </summary>
+    /// <returns>Task</returns>
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_lastId != Id)
+        {
+            EditSuccess = EditSuccessState.Success;
+            EditSuccessState.Success = false;
+            _lastId = Id;
+            await LoadUserAsync();
+        }
+        await base.OnParametersSetAsync();
+    }
+
+    /// <summary>
+    /// Confirm deletion
+    /// </summary>
+    /// <param name="result">True when user confirmed</param>
+    /// <returns>Task</returns>
+    private async Task ConfirmAsync(bool result)
+    {
+        if (result)
+        {
+            await DeleteAsync();
+        }
+        else
+        {
+            ShowConfirmation = false;
+            EditSuccess = false;
+        }
+    }
+
+    /// <summary>
+    /// Loads the user
+    /// </summary>
+    /// <returns>Task</returns>
+    private async Task LoadUserAsync()
+    {
+        if (Loading)
+        {
+            return; //avoid concurrent requests
+        }
+
+        NotFound = false;
+        User = null;
+
+        Loading = true;
+
+        User = await _userService.GetUserAsync(Id, true);
+
+        if (User is null)
+        {
+            NotFound = true;
+        }
+
+        Loading = false;
+    }
+
+    /// <summary>
+    /// Deletes the user.
+    /// </summary>
+    /// <returns>Task</returns>
+    private async Task DeleteAsync()
+    {
+        if (Loading)
+        {
+            return; // avoid concurrent requests
+        }
+
+        Loading = true;
+
+        if (await _userService.DeleteUserAsync(Id) > 0)
+        {
+            Loading = false;
+            Deleted = true;
+        }
+        else
+        {
+            Loading = false;
+            // show not found
+            await LoadUserAsync();
+        }
+    }
+}

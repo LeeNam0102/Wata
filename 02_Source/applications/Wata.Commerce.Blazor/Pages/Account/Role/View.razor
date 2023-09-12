@@ -1,0 +1,198 @@
+@page "/account/role/view/{Id:string}"
+
+@using Wata.Commerce.Common.Component;
+@using Wata.Commerce.Common.Helpers;
+@using Wata.Commerce.Common.Objects;
+@using Wata.Commerce.Account.Module.Services;
+@using Wata.Commerce.Account.Module.Models.Role;
+
+@inherits PageBase
+@inject IRoleService _roleService
+@inject IPageHelper PageHelper
+@inject EditSuccess EditSuccessState
+
+@if (NotFound && !Loading)
+{
+    <div class="alert alert-warning">A role with that id doesn't exist.</div>
+}
+else
+{
+    @if (Role is null || Loading)
+    {
+        <div class="alert alert-info">Loading...</div>
+    }
+    else
+    {
+        <h1>Id @Role.Id</h1>
+        <MudGrid>
+            <MudItem xs="4" Class="d-flex justify-end">Id:</MudItem>
+            <MudItem xs="8">@Role.Id</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">ConcurrencyStamp:</MudItem>
+            <MudItem xs="8">@Role.ConcurrencyStamp</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">Name:</MudItem>
+            <MudItem xs="8">@Role.Name</MudItem>
+            <MudItem xs="4" Class="d-flex justify-end">NormalizedName:</MudItem>
+            <MudItem xs="8">@Role.NormalizedName</MudItem>
+            @if (EditSuccess)
+            {
+                <MudItem xs="12" Class="alert alert-success">Successfully updated the role.</MudItem>
+            }
+            <MudItem xs="12">
+                <a class="btn btn-primary" title="Go Back" href="/account/role/@PageHelper.Page">
+                    🔙 Back to Grid
+                </a>
+            
+            
+            @if (!Deleted)
+            {
+                    <a class="btn btn-primary" href="account/role/edit/@Role.Id" title="Edit">Edit</a>
+
+                @if (!ShowConfirmation)
+                {
+                        <button class="btn btn-danger" @onclick="@(() => { ShowConfirmation = true; EditSuccess = false; })">Delete</button>
+                }
+                else
+                {
+                    <MudItem xs="12">
+                        <DeletePrompt Confirmation="@(async result => await ConfirmAsync(result))" />
+                    </MudItem>
+                }
+            }
+            else
+            {
+                <MudItem xs="12" Class="btn btn-danger">🚫 This item has been deleted.</MudItem>
+            }
+            </MudItem>
+        </MudGrid>
+    }
+}
+
+@code {
+    /// <summary>
+    /// Tracking of asynchronous calls.
+    /// </summary>
+    private bool Loading;
+
+    /// <summary>
+    /// Id from route of role.
+    /// </summary>
+    [Parameter]
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Navigation check.
+    /// </summary>
+    private int _lastId;
+
+    /// <summary>
+    /// True with redirect from successful edit.
+    /// </summary>
+    [Parameter]
+    public bool EditSuccess { get; set; }
+
+    /// <summary>
+    /// Role entity.
+    /// </summary>
+    private RoleModel? Role { get; set; }
+
+    /// <summary>
+    /// Set to true when not found.
+    /// </summary>
+    private bool NotFound = false;
+
+    /// <summary>
+    /// Set to true when delete is requested.
+    /// </summary>
+    private bool ShowConfirmation = false;
+
+    /// <summary>
+    /// Set to true when delete is successful
+    /// </summary>
+    private bool Deleted = false;
+
+    /// <summary>
+    /// Navigated
+    /// </summary>
+    /// <returns>Task</returns>
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_lastId != Id)
+        {
+            EditSuccess = EditSuccessState.Success;
+            EditSuccessState.Success = false;
+            _lastId = Id;
+            await LoadRoleAsync();
+        }
+        await base.OnParametersSetAsync();
+    }
+
+    /// <summary>
+    /// Confirm deletion
+    /// </summary>
+    /// <param name="result">True when user confirmed</param>
+    /// <returns>Task</returns>
+    private async Task ConfirmAsync(bool result)
+    {
+        if (result)
+        {
+            await DeleteAsync();
+        }
+        else
+        {
+            ShowConfirmation = false;
+            EditSuccess = false;
+        }
+    }
+
+    /// <summary>
+    /// Loads the role
+    /// </summary>
+    /// <returns>Task</returns>
+    private async Task LoadRoleAsync()
+    {
+        if (Loading)
+        {
+            return; //avoid concurrent requests
+        }
+
+        NotFound = false;
+        Role = null;
+
+        Loading = true;
+
+        Role = await _roleService.GetRoleAsync(Id, true);
+
+        if (Role is null)
+        {
+            NotFound = true;
+        }
+
+        Loading = false;
+    }
+
+    /// <summary>
+    /// Deletes the role.
+    /// </summary>
+    /// <returns>Task</returns>
+    private async Task DeleteAsync()
+    {
+        if (Loading)
+        {
+            return; // avoid concurrent requests
+        }
+
+        Loading = true;
+
+        if (await _roleService.DeleteRoleAsync(Id) > 0)
+        {
+            Loading = false;
+            Deleted = true;
+        }
+        else
+        {
+            Loading = false;
+            // show not found
+            await LoadRoleAsync();
+        }
+    }
+}

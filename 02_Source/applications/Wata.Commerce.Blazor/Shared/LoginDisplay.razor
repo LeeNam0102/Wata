@@ -1,0 +1,10 @@
+<AuthorizeView>
+    <Authorized>
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="" Target="_blank" />
+        <a href="" class="btn btn-link">Hello, context.User.Identity?.Name!</a>
+        <a href="Account/Logout" class="btn btn-link">Log out</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="Account/Login" class="btn btn-link">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>

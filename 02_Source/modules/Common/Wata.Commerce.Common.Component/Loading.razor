@@ -1,0 +1,28 @@
+﻿@using Wata.Commerce.Common.Component.Services;
+
+@inject SpinnerService _spinnerService
+<MudOverlay Visible="@IsBusy" DarkBackground="true" Absolute="true">
+    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+</MudOverlay>
+@code {
+    [Parameter]
+    public bool IsBusy { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _spinnerService.OnShow += ShowLoadingSpinner;
+        _spinnerService.OnHide += HideLoadingSpinner;
+    }
+
+    public void ShowLoadingSpinner()
+    {
+        IsBusy = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void HideLoadingSpinner()
+    {
+        IsBusy = false;
+        InvokeAsync(StateHasChanged);
+    }
+}

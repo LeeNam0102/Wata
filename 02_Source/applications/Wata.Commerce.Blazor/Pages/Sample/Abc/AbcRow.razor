@@ -1,0 +1,159 @@
+@using Wata.Commerce.Common.Component;
+@using Wata.Commerce.Sample.Module.Models.Abc;
+
+@if (CurrentAbc is not null)
+{
+    <tr>
+        <td>
+            <MudLink Href="@("/sample/abc/edit/" + CurrentAbc.AbcID)">
+                <MudIcon Color="Color.Default" Icon="@Icons.Material.Filled.Edit" Title="Edit" />
+            </MudLink>
+            @if (CanDelete)
+            {
+                <MudIcon Color="Color.Default" @onclick="DeleteRequestAsync" Icon="@Icons.Material.Filled.Delete" Title="Delete" />
+            }
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @AbcID
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @Name
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @CreateDate
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @UpdateDate
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @CreateBy
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @UpdateBy
+             </a>
+        </td>
+    </tr>
+    @if (DeleteConfirmation)
+    {
+        <tr>
+            <td colspan="7">
+                <DeletePrompt Confirmation="ConfirmAsync" />
+            </td>
+        </tr>
+    }
+}
+@code {
+    private AbcModel _currentAbc = new AbcModel();
+
+    /// <summary>
+    /// The <see cref="Abc"/> being rendered.
+    /// </summary>
+    [Parameter]
+    public AbcModel CurrentAbc
+    {
+        get => _currentAbc;
+        set
+        {
+            if (value is not null && !value.Equals(_currentAbc))
+            {
+                _currentAbc = value;
+                DeleteConfirmation = false;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Event to raise when a abc delete is requested.
+    /// </summary>
+    [Parameter]
+    public EventCallback DeleteAbc { get; set; }
+
+    /// <summary>
+    /// Overall wrapper of functionality.
+    /// </summary>
+    [CascadingParameter]
+    public GridWrapper? Wrapper { get; set; }
+
+    /// <summary>
+    /// Returns <c>true</c> if conditions for delete are met.
+    /// </summary>
+    private bool CanDelete => !DeleteConfirmation &&
+    (Wrapper?.DeleteRequestId == 0 ||
+    Wrapper?.DeleteRequestId == CurrentAbc?.AbcID);
+
+    /// <summary>
+    /// Navigate to view.
+    /// </summary>
+    private string ViewLink => $"sample/abc/view/{CurrentAbc?.AbcID}";
+
+    /// <summary>
+    /// Confirm the delete.
+    /// </summary>
+    private bool DeleteConfirmation { get; set; }
+
+    /// <summary>
+    /// Called based on confirmation.
+    /// </summary>
+    /// <param name="confirmed"><c>True</c> when confirmed</param>
+    /// <returns>A <see cref="Task"/>.</returns>
+    private async Task ConfirmAsync(bool confirmed)
+    {
+        if (confirmed)
+        {
+            await DeleteAsync();
+        }
+        else
+        {
+            DeleteConfirmation = false;
+
+            if (Wrapper is not null)
+            {
+                await Wrapper.DeleteRequested.InvokeAsync(0);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Set delete to true.
+    /// </summary>
+    private async Task DeleteRequestAsync()
+    {
+        if (Wrapper?.DeleteRequestId == 0)
+        {
+            DeleteConfirmation = true;
+            await Wrapper.DeleteRequested.InvokeAsync(CurrentAbc.AbcID);
+        }
+    }
+
+    /// <summary>
+    /// Deletes the <see cref="Abc"/>.
+    /// </summary>
+    /// <returns>A <see cref="Task"/>.</returns>
+    private Task DeleteAsync()
+    {
+        return DeleteAbc.InvokeAsync(this);
+    }
+
+        private int AbcID => CurrentAbc.AbcID;
+
+        private string Name => CurrentAbc.Name;
+
+        private DateTime CreateDate => CurrentAbc.CreateDate;
+
+        private DateTime? UpdateDate => CurrentAbc.UpdateDate;
+
+        private string CreateBy => CurrentAbc.CreateBy;
+
+        private string UpdateBy => CurrentAbc.UpdateBy;
+}

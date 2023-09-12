@@ -24,7 +24,7 @@ namespace Wata.Commerce.Sample.IntegrationTest.Tests
         public async Task Insert_Success()
         {
             AbcRequestDto requestDto = new AbcRequestDto();
-			requestDto.Name = "Name";
+            requestDto.Name = "Name";
 
             var result = await _abcClient.InsertAsync(requestDto);
 
@@ -35,8 +35,8 @@ namespace Wata.Commerce.Sample.IntegrationTest.Tests
         public async Task Update_Success()
         {
             AbcRequestDto requestDto = new AbcRequestDto();
-			requestDto.AbcID = 1;
-			requestDto.Name = "Name";
+            requestDto.AbcID = 1;
+            requestDto.Name = "Name";
 
             var result = await _abcClient.UpdateAsync(requestDto);
 
@@ -46,7 +46,7 @@ namespace Wata.Commerce.Sample.IntegrationTest.Tests
         [TestMethod]
         public async Task Delete_Success()
         {
-            var result = await _abcClient.DeleteAsync(5);
+            var result = await _abcClient.DeleteAsync(2);
 
             Assert.IsTrue(result > 0);
         }
@@ -62,7 +62,7 @@ namespace Wata.Commerce.Sample.IntegrationTest.Tests
         [TestMethod]
         public async Task GetList_Success()
         {
-            var result = await _abcClient.GetListAsync(new AbcFilterDto() { IsOutputTotal = true});
+            var result = await _abcClient.GetListAsync(new AbcFilterDto() { IsOutputTotal = true });
 
             Assert.IsTrue(result.TotalRecords > 0);
             Assert.AreEqual(result.Data.Count, result.TotalRecords);

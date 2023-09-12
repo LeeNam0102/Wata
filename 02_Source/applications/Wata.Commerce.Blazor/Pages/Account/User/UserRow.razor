@@ -1,0 +1,222 @@
+@using Wata.Commerce.Common.Component;
+@using Wata.Commerce.Account.Module.Models.User;
+
+@if (CurrentUser is not null)
+{
+    <tr>
+        <td>
+            <MudLink Href="@("/account/user/edit/" + CurrentUser.Id)">
+                <MudIcon Color="Color.Default" Icon="@Icons.Material.Filled.Edit" Title="Edit" />
+            </MudLink>
+            @if (CanDelete)
+            {
+                <MudIcon Color="Color.Default" @onclick="DeleteRequestAsync" Icon="@Icons.Material.Filled.Delete" Title="Delete" />
+            }
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @Id
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @AccessFailedCount
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @ConcurrencyStamp
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @Email
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @EmailConfirmed
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @LockoutEnabled
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @LockoutEnd
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @NormalizedEmail
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @NormalizedUserName
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @PasswordHash
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @PhoneNumber
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @PhoneNumberConfirmed
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @SecurityStamp
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @TwoFactorEnabled
+             </a>
+        </td>
+        <td>
+             <a href="@ViewLink" alt="View Details" title="View Details">
+                 @UserName
+             </a>
+        </td>
+    </tr>
+    @if (DeleteConfirmation)
+    {
+        <tr>
+            <td colspan="16">
+                <DeletePrompt Confirmation="ConfirmAsync" />
+            </td>
+        </tr>
+    }
+}
+@code {
+    private UserModel _currentUser = new UserModel();
+
+    /// <summary>
+    /// The <see cref="User"/> being rendered.
+    /// </summary>
+    [Parameter]
+    public UserModel CurrentUser
+    {
+        get => _currentUser;
+        set
+        {
+            if (value is not null && !value.Equals(_currentUser))
+            {
+                _currentUser = value;
+                DeleteConfirmation = false;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Event to raise when a user delete is requested.
+    /// </summary>
+    [Parameter]
+    public EventCallback DeleteUser { get; set; }
+
+    /// <summary>
+    /// Overall wrapper of functionality.
+    /// </summary>
+    [CascadingParameter]
+    public GridWrapper? Wrapper { get; set; }
+
+    /// <summary>
+    /// Returns <c>true</c> if conditions for delete are met.
+    /// </summary>
+    private bool CanDelete => !DeleteConfirmation &&
+    (Wrapper?.DeleteRequestId == 0 ||
+    Wrapper?.DeleteRequestId == CurrentUser?.Id);
+
+    /// <summary>
+    /// Navigate to view.
+    /// </summary>
+    private string ViewLink => $"account/user/view/{CurrentUser?.Id}";
+
+    /// <summary>
+    /// Confirm the delete.
+    /// </summary>
+    private bool DeleteConfirmation { get; set; }
+
+    /// <summary>
+    /// Called based on confirmation.
+    /// </summary>
+    /// <param name="confirmed"><c>True</c> when confirmed</param>
+    /// <returns>A <see cref="Task"/>.</returns>
+    private async Task ConfirmAsync(bool confirmed)
+    {
+        if (confirmed)
+        {
+            await DeleteAsync();
+        }
+        else
+        {
+            DeleteConfirmation = false;
+
+            if (Wrapper is not null)
+            {
+                await Wrapper.DeleteRequested.InvokeAsync(0);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Set delete to true.
+    /// </summary>
+    private async Task DeleteRequestAsync()
+    {
+        if (Wrapper?.DeleteRequestId == 0)
+        {
+            DeleteConfirmation = true;
+            await Wrapper.DeleteRequested.InvokeAsync(CurrentUser.Id);
+        }
+    }
+
+    /// <summary>
+    /// Deletes the <see cref="User"/>.
+    /// </summary>
+    /// <returns>A <see cref="Task"/>.</returns>
+    private Task DeleteAsync()
+    {
+        return DeleteUser.InvokeAsync(this);
+    }
+
+        private string Id => CurrentUser.Id;
+
+        private int AccessFailedCount => CurrentUser.AccessFailedCount;
+
+        private string ConcurrencyStamp => CurrentUser.ConcurrencyStamp;
+
+        private string Email => CurrentUser.Email;
+
+        private bool EmailConfirmed => CurrentUser.EmailConfirmed;
+
+        private bool LockoutEnabled => CurrentUser.LockoutEnabled;
+
+        private bool LockoutEnd => CurrentUser.LockoutEnd;
+
+        private string NormalizedEmail => CurrentUser.NormalizedEmail;
+
+        private string NormalizedUserName => CurrentUser.NormalizedUserName;
+
+        private string PasswordHash => CurrentUser.PasswordHash;
+
+        private string PhoneNumber => CurrentUser.PhoneNumber;
+
+        private bool PhoneNumberConfirmed => CurrentUser.PhoneNumberConfirmed;
+
+        private string SecurityStamp => CurrentUser.SecurityStamp;
+
+        private bool TwoFactorEnabled => CurrentUser.TwoFactorEnabled;
+
+        private string UserName => CurrentUser.UserName;
+}

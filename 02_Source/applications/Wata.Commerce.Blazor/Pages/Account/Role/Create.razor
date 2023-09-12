@@ -1,0 +1,125 @@
+@page "/account/role/create"
+
+@using Wata.Commerce.Common.Helpers;
+@using Wata.Commerce.Common.Component;
+@using Wata.Commerce.Account.Module.Services;
+@using Wata.Commerce.Account.Module.Models.Role;
+
+@inherits PageBase
+@inject IRoleService _roleService
+@inject NavigationManager Navigation
+@inject IPageHelper PageHelper
+
+@if (Role is not null)
+{
+    <RoleForm Busy="@Busy" 
+                   Role="@Role" 
+                   IsAdd="true"
+                   CancelRequest="Cancel"
+                   ValidationResult="@(async (success) => await ValidationResultAsync(success))" />
+}
+@if (Success)
+{
+    <br />
+    <div class="alert alert-success">The role was successfully added.</div>
+}
+@if (Error)
+{
+    <br />
+    <div class="alert alert-danger">Failed to add the role (@ErrorMessage).</div>
+}
+
+@code {
+    /// <summary>
+    /// New <see cref="Role"/>.
+    /// </summary>
+    private RoleModel? Role { get; set; }
+
+    /// <summary>
+    /// <c>True</c> when an asynchronous operation is running.
+    /// </summary>
+    private bool Busy;
+
+    /// <summary>
+    /// <c>True</c> after successful add.
+    /// </summary>
+    private bool Success;
+
+    /// <summary>
+    /// <c>True</c> when an error occurred.
+    /// </summary>
+    private bool Error;
+
+    /// <summary>
+    /// The error message
+    /// </summary>
+    private string ErrorMessage = string.Empty;
+
+    /// <summary>
+    /// Start with fresh <see cref="Role"/>.
+    /// </summary>
+    /// <returns>A <see cref="Task"/>.</returns>
+    protected override Task OnInitializedAsync()
+    {
+        Role = new();
+        return base.OnInitializedAsync();
+    }
+
+    /// <summary>
+    /// Respond to a forms submission.
+    /// </summary>
+    /// <param name="success"><c>True</c> when valid.</param>
+    /// <returns>A <see cref="Task"/>.</returns>
+    private async Task ValidationResultAsync(bool success)
+    {
+        if (Busy)
+        {
+            return;
+        }
+
+        if (!success)
+        {
+            Success = false;
+            Error = false;
+            return;
+        }
+
+        Busy = true;
+
+        try
+        {
+            RoleModel? newRole = await _roleService.InsertRoleAsync(Role);
+
+            if (newRole != null)
+            {
+                Success = true;
+                Error = false;
+                // ready for the next
+                Role = new RoleModel();
+                Busy = false;
+            }
+            else
+            {
+                Success = false;
+                Error = true;
+                Busy = false;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Success = false;
+            Error = true;
+            ErrorMessage = ex.Message;
+            Busy = false;
+        }
+    }
+
+    /// <summary>
+    /// Back to list.
+    /// </summary>
+    private void Cancel()
+    {
+        Navigation.NavigateTo($"/account/role/{PageHelper.Page}");
+    }
+}

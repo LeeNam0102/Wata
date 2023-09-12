@@ -1,0 +1,299 @@
+@page "/account/user"
+@page "/account/user/{Page:int}"
+
+@using Wata.Commerce.Common.Objects;
+@using Wata.Commerce.Common.Component;
+@using Wata.Commerce.Account.Dtos;
+@using Wata.Commerce.Account.Module.Models.User;
+@using Wata.Commerce.Account.Module.Services;
+
+@inherits PageBase
+@inject NavigationManager Navigation
+@inject IUserFilters Filters
+@inject IUserService _userService
+
+<h1>Users</h1>
+
+<GridWrapper @ref="Wrapper" FilterChanged="ReloadAsync" DeleteRequested="id => Wrapper.DeleteRequestId = id">
+
+    <MudGrid Class="d-flex align-center">
+        <MudItem xs="2"><a class="btn btn-primary" href="/account/user/create">Add New User</a></MudItem>
+        <MudItem xs="2" Class="text-end">Filter by:</MudItem>
+        <MudItem xs="6">
+            <input type="text" class="form-control" autofocus @bind-value="FilterText" @bind-value:event="oninput" @onkeyup="Enter" />
+        </MudItem>
+        <MudItem xs="2">
+            <button class="btn btn-danger" @onclick="@(async ()=> await Search())">Search</button>
+        </MudItem>
+    </MudGrid>
+
+    <MudSimpleTable Hover="true" Dense="true" FixedHeader="true" Class="mt-5" Style="height:300px;">
+        <thead>
+            <tr>
+                <th></th>
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.Id))">
+                     <SortIndicator Column="@(UserFilterColumns.Id)" />Id
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.AccessFailedCount))">
+                     <SortIndicator Column="@(UserFilterColumns.AccessFailedCount)" />AccessFailedCount
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.ConcurrencyStamp))">
+                     <SortIndicator Column="@(UserFilterColumns.ConcurrencyStamp)" />ConcurrencyStamp
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.Email))">
+                     <SortIndicator Column="@(UserFilterColumns.Email)" />Email
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.EmailConfirmed))">
+                     <SortIndicator Column="@(UserFilterColumns.EmailConfirmed)" />EmailConfirmed
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.LockoutEnabled))">
+                     <SortIndicator Column="@(UserFilterColumns.LockoutEnabled)" />LockoutEnabled
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.LockoutEnd))">
+                     <SortIndicator Column="@(UserFilterColumns.LockoutEnd)" />LockoutEnd
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.NormalizedEmail))">
+                     <SortIndicator Column="@(UserFilterColumns.NormalizedEmail)" />NormalizedEmail
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.NormalizedUserName))">
+                     <SortIndicator Column="@(UserFilterColumns.NormalizedUserName)" />NormalizedUserName
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.PasswordHash))">
+                     <SortIndicator Column="@(UserFilterColumns.PasswordHash)" />PasswordHash
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.PhoneNumber))">
+                     <SortIndicator Column="@(UserFilterColumns.PhoneNumber)" />PhoneNumber
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.PhoneNumberConfirmed))">
+                     <SortIndicator Column="@(UserFilterColumns.PhoneNumberConfirmed)" />PhoneNumberConfirmed
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.SecurityStamp))">
+                     <SortIndicator Column="@(UserFilterColumns.SecurityStamp)" />SecurityStamp
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.TwoFactorEnabled))">
+                     <SortIndicator Column="@(UserFilterColumns.TwoFactorEnabled)" />TwoFactorEnabled
+                </th>
+
+                <th @onclick="@(async ()=>await ToggleAsync(UserFilterColumns.UserName))">
+                     <SortIndicator Column="@(UserFilterColumns.UserName)" />UserName
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Filters.Loading || Users is null)
+            {
+                <tr>
+                    <td colspan="16">
+                        Loading...
+                    </td>
+                </tr>
+            }
+            @if (Users is not null && Users.Equals(0))
+            {
+                <tr>
+                    <td colspan="16">
+                        No users found.
+                    </td>
+                </tr>
+            }
+            @if (Users is not null)
+            {
+                @foreach (UserModel user in Users)
+                {
+                    <UserRow @key=user CurrentUser="@user" DeleteUser="DeleteUserAsync" />
+                }
+            }
+        </tbody>
+    </MudSimpleTable>
+    <Paging Url="/account/user/" IsLoading="Filters.Loading" PageHelper="Filters.PageHelper"/>
+
+</GridWrapper>
+
+@code {
+    /// <summary>
+    /// The current page.
+    /// </summary>
+    [Parameter]
+    public int Page
+    {
+        get => Filters.PageHelper.Page;
+        set
+        {
+            Filters.PageHelper.Page = value;
+        }
+    }
+
+    /// <summary>
+    /// A wrapper for grid-related activity (like delete).
+    /// </summary>
+    private GridWrapper Wrapper { get; set; } = new GridWrapper();
+
+    /// <summary>
+    /// Current page of <see cref="User"/>.
+    /// </summary>
+    private ICollection<UserModel>? Users { get; set; }
+
+    /// <summary>
+    /// Keeps track of the last page loaded.
+    /// </summary>
+    private int _lastPage = -1;
+
+    /// <summary>
+    /// Main logic when getting started.
+    /// </summary>
+    /// <param name="firstRender"><c>true</c> for first-time render.</param>
+    protected override void OnAfterRender(bool firstRender)
+    {
+        // Ensure we're on the same, er, right page.
+        if (_lastPage < 1)
+        {
+            Navigation.NavigateTo("/account/user/1");
+            return;
+        }
+
+        // Normalize the page values.
+        if (Filters.PageHelper.PageCount > 0)
+        {
+            if (Page < 1)
+            {
+                Navigation.NavigateTo("/account/user/1");
+                return;
+            }
+            if (Page > Filters.PageHelper.PageCount)
+            {
+                Navigation.NavigateTo($"/account/user/{Filters.PageHelper.PageCount}");
+                return;
+            }
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    /// <summary>
+    /// Triggered for any paging update.
+    /// </summary>
+    /// <returns>A <see cref="Task"/>.</returns>
+    protected override async Task OnParametersSetAsync()
+    {
+        // Make sure the page really chagned.
+        if (Page != _lastPage)
+        {
+            _lastPage = Page;
+            await ReloadAsync();
+        }
+        await base.OnParametersSetAsync();
+    }
+
+    /// <summary>
+    /// Used to toggle the grid sort. Will either switch to "ascending" on a new
+    /// column, or toggle beteween "ascending" and "descending" on a column with the
+    /// sort already set.
+    /// </summary>
+    /// <param name="col">The <see cref="UserFilterColumns"/> to toggle.</param>
+    /// <returns>A <see cref="Task"/>.</returns>
+
+    private Task ToggleAsync(UserFilterColumns col)
+    {
+        if (Filters.SortColumn == col)
+        {
+            Filters.SortDescending = !Filters.SortDescending;
+        }
+        else
+        {
+            Filters.SortColumn = col;
+        }
+        return ReloadAsync();
+    }
+
+    /// <summary>
+    /// Deletes a user.
+    /// </summary>
+    /// <returns>A <see cref="Task"/>.</returns>
+    #region snippet1
+    private async Task DeleteUserAsync()
+    {
+        Filters.Loading = true;
+        await _userService.DeleteUserAsync(Wrapper.DeleteRequestId);
+        Filters.Loading = false;
+
+        await ReloadAsync();
+    }
+    #endregion
+
+    /// <summary>
+    /// Reload page based on filters and paging controls.
+    /// </summary>
+    /// <returns>A <see cref="Task"/>.</returns>
+    private async Task ReloadAsync()
+    {
+        if (Filters.Loading || Page < 1)
+        {
+            return;
+        }
+
+        Filters.Loading = true;
+
+        if (Wrapper is not null)
+        {
+            Wrapper.DeleteRequestId = 0;
+        }
+
+        PagedDto<UserModel>? pagedDto = await _userService.GetListUsersAsync(
+            new UserFilterDto {
+                Keyword = Filters.FilterText,
+                IsOutputTotal = true,
+                OrderBy = Filters.FilterColumn.ToString(),
+                IsDescending = Filters.SortDescending,
+                PageIndex = Filters.PageHelper.Page, 
+                PageSize = Filters.PageHelper.PageSize });
+
+        Users = pagedDto?.Data.ToList();
+        Filters.PageHelper.TotalItemCount = pagedDto?.TotalRecords??0;
+        Filters.PageHelper.PageItems = pagedDto?.Data.Count??0;
+
+        Filters.Loading = false;
+    }
+
+    private string? filterText;
+
+    /// <summary>
+    /// Text to filter on.
+    /// </summary>
+    private string? FilterText
+    {
+        get => filterText;
+        set
+        {
+            if (value != filterText)
+            {
+                filterText = value;
+            }
+        }
+    }
+
+    public async Task Search()
+    {
+        Filters.FilterText = FilterText;
+        await ReloadAsync();
+    }
+
+    public async Task Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            await Search();
+        }
+    }
+}
