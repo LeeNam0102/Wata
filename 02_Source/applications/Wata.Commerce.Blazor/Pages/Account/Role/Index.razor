@@ -1,6 +1,7 @@
 @page "/account/role"
 @page "/account/role/{Page:int}"
 
+@using Microsoft.AspNetCore.Components.Web;
 @using Wata.Commerce.Common.Objects;
 @using Wata.Commerce.Common.Component;
 @using Wata.Commerce.Account.Dtos;
@@ -181,7 +182,7 @@
     private async Task DeleteRoleAsync()
     {
         Filters.Loading = true;
-        await _roleService.DeleteRoleAsync(Wrapper.DeleteRequestId);
+        await _roleService.DeleteRoleAsync(Wrapper.DeleteRequestId.ToString());
         Filters.Loading = false;
 
         await ReloadAsync();

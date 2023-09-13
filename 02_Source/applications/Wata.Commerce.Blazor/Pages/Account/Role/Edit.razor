@@ -24,7 +24,7 @@ else
     <RoleForm Busy="@Busy" Role="@Role"
                  IsAdd="false"
                  CancelRequest="Cancel"
-                 ValidationResult="@(async (success) => await ValidationResultAsync(success))" />
+                 ValidationResult="@(async (bool success) => await ValidationResultAsync(success))" />
 }
 
 @if (Error)
@@ -48,7 +48,7 @@ else
     /// <summary>
     /// Avoid concurrent requests
     /// </summary>
-    private bool Busy; 
+    private bool Busy;
 
     /// <summary>
     /// An error occurred in the update
@@ -71,7 +71,7 @@ else
 
         try
         {
-            Role = await _roleService.GetRoleAsync(Id);
+            Role = await _roleService.GetRoleAsync(Id.ToString());
         }
         finally
         {

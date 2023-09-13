@@ -17,6 +17,7 @@ namespace Wata.Commerce.Account.IntegrationTest
         {
             builder.ConfigureTestServices(services =>
             {
+
                 IntegrationTestBase._configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
 
                 services.AddDbContext<AppDbContext>(options => {

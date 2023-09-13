@@ -41,8 +41,8 @@ else
                 <a class="btn btn-primary" title="Go Back" href="/account/role/@PageHelper.Page">
                     🔙 Back to Grid
                 </a>
-            
-            
+
+
             @if (!Deleted)
             {
                     <a class="btn btn-primary" href="account/role/edit/@Role.Id" title="Edit">Edit</a>
@@ -54,7 +54,7 @@ else
                 else
                 {
                     <MudItem xs="12">
-                        <DeletePrompt Confirmation="@(async result => await ConfirmAsync(result))" />
+                        <DeletePrompt Confirmation="@(async (bool result) => await ConfirmAsync(result))" />
                     </MudItem>
                 }
             }
@@ -160,7 +160,7 @@ else
 
         Loading = true;
 
-        Role = await _roleService.GetRoleAsync(Id, true);
+        Role = await _roleService.GetRoleAsync(Id.ToString(), true);
 
         if (Role is null)
         {
@@ -183,7 +183,7 @@ else
 
         Loading = true;
 
-        if (await _roleService.DeleteRoleAsync(Id) > 0)
+        if (await _roleService.DeleteRoleAsync(Id.ToString()) > 0)
         {
             Loading = false;
             Deleted = true;

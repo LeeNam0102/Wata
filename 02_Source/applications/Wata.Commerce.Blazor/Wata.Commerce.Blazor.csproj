@@ -9,13 +9,9 @@
 
   <ItemGroup>
     <Compile Remove="Pages\Account\**" />
-    <Compile Remove="Pages\Sample\**" />
     <Content Remove="Pages\Account\**" />
-    <Content Remove="Pages\Sample\**" />
     <EmbeddedResource Remove="Pages\Account\**" />
-    <EmbeddedResource Remove="Pages\Sample\**" />
     <None Remove="Pages\Account\**" />
-    <None Remove="Pages\Sample\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,18 +25,32 @@
   <ItemGroup>
     <None Include="compilerconfig.json" />
     <None Include="Pages\About.razor" />
+    <None Include="Pages\Account\Role\Create.razor" />
+    <None Include="Pages\Account\Role\Edit.razor" />
+    <None Include="Pages\Account\Role\Index.razor" />
+    <None Include="Pages\Account\Role\RoleForm.razor" />
+    <None Include="Pages\Account\Role\RoleRow.razor" />
+    <None Include="Pages\Account\Role\SortIndicator.razor" />
+    <None Include="Pages\Account\Role\View.razor" />
     <None Include="Pages\AuthSample.razor" />
     <None Include="Pages\BusySample.razor" />
     <None Include="Pages\Error.cshtml" />
     <None Include="Pages\Index.razor" />
     <None Include="Pages\ModalSample.razor" />
+    <None Include="Pages\Sample\Abc\AbcForm.razor" />
+    <None Include="Pages\Sample\Abc\AbcRow.razor" />
+    <None Include="Pages\Sample\Abc\Create.razor" />
+    <None Include="Pages\Sample\Abc\Edit.razor" />
+    <None Include="Pages\Sample\Abc\Index.razor" />
+    <None Include="Pages\Sample\Abc\SortIndicator.razor" />
+    <None Include="Pages\Sample\Abc\View.razor" />
     <None Include="Pages\_Host.cshtml" />
     <None Include="Pages\_Layout.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazored.Modal" Version="7.1.0" />
-	<PackageReference Include="MudBlazor" Version="6.7.0" />
+	<PackageReference Include="MudBlazor" Version="6.9.0" />
 	<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
   </ItemGroup>
 

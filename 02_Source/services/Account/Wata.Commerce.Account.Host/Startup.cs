@@ -1,4 +1,4 @@
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;

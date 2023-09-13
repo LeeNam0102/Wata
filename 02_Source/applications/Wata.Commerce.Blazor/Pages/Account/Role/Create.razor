@@ -16,7 +16,7 @@
                    Role="@Role" 
                    IsAdd="true"
                    CancelRequest="Cancel"
-                   ValidationResult="@(async (success) => await ValidationResultAsync(success))" />
+                   ValidationResult="@(async (bool success) => await ValidationResultAsync(success))" />
 }
 @if (Success)
 {

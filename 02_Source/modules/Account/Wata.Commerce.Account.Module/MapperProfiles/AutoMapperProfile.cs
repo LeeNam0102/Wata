@@ -1,6 +1,6 @@
 using AutoMapper;
 using Wata.Commerce.Account.Dtos;
-//using Wata.Commerce.Account.Module.Models.Abc;
+using Wata.Commerce.Account.Module.Models.Role;
 
 namespace Wata.Commerce.Account.Module.MapperProfiles
 {
@@ -8,8 +8,8 @@ namespace Wata.Commerce.Account.Module.MapperProfiles
     {
         public AutoMapperProfile()
         {
-            //CreateMap<AbcDto, AbcModel>();
-            //CreateMap<AbcModel, AbcRequestDto>();
+            CreateMap<RoleDto, RoleModel>();
+            CreateMap<RoleModel, RoleRequestDto>();
         }
     }
 }
