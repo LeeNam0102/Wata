@@ -1,12 +1,11 @@
-@using MudBlazor;
-@using Wata.Commerce.Common.Component;
 @using Wata.Commerce.Account.Module.Models.Role;
+@using Wata.Commerce.Common.Component;
+
 
 @if (CurrentRole is not null)
 {
     <tr>
         <td>
-           
             <MudLink Href="@("/account/role/edit/" + CurrentRole.Id)">
                 <MudIcon Color="Color.Default" Icon="@Icons.Material.Filled.Edit" Title="Edit" />
             </MudLink>
@@ -82,7 +81,7 @@
     /// </summary>
     private bool CanDelete => !DeleteConfirmation &&
     (Wrapper?.DeleteRequestId == 0 ||
-    Wrapper?.DeleteRequestId == CurrentRole?.Id);
+    Wrapper?.DeleteRequestId.ToString() == CurrentRole?.Id);
 
     /// <summary>
     /// Navigate to view.
@@ -124,7 +123,7 @@
         if (Wrapper?.DeleteRequestId == 0)
         {
             DeleteConfirmation = true;
-            await Wrapper.DeleteRequested.InvokeAsync(CurrentRole.Id);
+            await Wrapper.DeleteRequested.InvokeAsync(Int32.Parse(CurrentRole.Id));
         }
     }
 

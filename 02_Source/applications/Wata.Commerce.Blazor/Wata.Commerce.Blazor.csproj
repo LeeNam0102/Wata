@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
 	  <TargetFramework>net7.0</TargetFramework>
@@ -8,10 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\Account\**" />
-    <Content Remove="Pages\Account\**" />
-    <EmbeddedResource Remove="Pages\Account\**" />
-    <None Remove="Pages\Account\**" />
+    <Compile Remove="Pages\Account\User\**" />
+    <Compile Remove="Pages\Sample\**" />
+    <Content Remove="Pages\Account\User\**" />
+    <Content Remove="Pages\Sample\**" />
+    <EmbeddedResource Remove="Pages\Account\User\**" />
+    <EmbeddedResource Remove="Pages\Sample\**" />
+    <None Remove="Pages\Account\User\**" />
+    <None Remove="Pages\Sample\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,19 +41,18 @@
     <None Include="Pages\Error.cshtml" />
     <None Include="Pages\Index.razor" />
     <None Include="Pages\ModalSample.razor" />
-    <None Include="Pages\Sample\Abc\AbcForm.razor" />
-    <None Include="Pages\Sample\Abc\AbcRow.razor" />
-    <None Include="Pages\Sample\Abc\Create.razor" />
-    <None Include="Pages\Sample\Abc\Edit.razor" />
-    <None Include="Pages\Sample\Abc\Index.razor" />
-    <None Include="Pages\Sample\Abc\SortIndicator.razor" />
-    <None Include="Pages\Sample\Abc\View.razor" />
     <None Include="Pages\_Host.cshtml" />
     <None Include="Pages\_Layout.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazored.Modal" Version="7.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
 	<PackageReference Include="MudBlazor" Version="6.9.0" />
 	<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-@page "/account/user/edit/{Id:string}"
+@page "/account/user/edit/{Id:String}"
 
 @using Wata.Commerce.Common.Helpers;
 @using Wata.Commerce.Common.Component;
@@ -71,7 +71,7 @@ else
 
         try
         {
-            User = await _userService.GetUserAsync(Id);
+            User = await _userService.GetUserAsync(Id.ToString());
         }
         finally
         {

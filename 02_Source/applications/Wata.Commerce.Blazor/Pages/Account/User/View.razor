@@ -182,7 +182,7 @@ else
 
         Loading = true;
 
-        User = await _userService.GetUserAsync(Id, true);
+        User = await _userService.GetUserAsync(Id.ToString(), true);
 
         if (User is null)
         {
@@ -205,7 +205,7 @@ else
 
         Loading = true;
 
-        if (await _userService.DeleteUserAsync(Id) > 0)
+        if (await _userService.DeleteUserAsync(Id.ToString()) > 0)
         {
             Loading = false;
             Deleted = true;

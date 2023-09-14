@@ -225,7 +225,7 @@
     private async Task DeleteUserAsync()
     {
         Filters.Loading = true;
-        await _userService.DeleteUserAsync(Wrapper.DeleteRequestId);
+        await _userService.DeleteUserAsync(Wrapper.DeleteRequestId.ToString());
         Filters.Loading = false;
 
         await ReloadAsync();

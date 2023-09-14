@@ -22,8 +22,4 @@
     <ProjectReference Include="..\Wata.Commerce.Account.Data\Wata.Commerce.Account.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

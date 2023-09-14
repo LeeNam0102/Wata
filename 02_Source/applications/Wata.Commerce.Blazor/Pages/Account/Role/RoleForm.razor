@@ -1,6 +1,5 @@
-@using Microsoft.AspNetCore.Components.Forms;
 @using Wata.Commerce.Account.Module.Models.Role;
-
+@using Microsoft.AspNetCore.Components.Forms;
 <h1>@Mode role</h1>
 <hr />
 @if (Role is not null)
@@ -12,6 +11,10 @@
         <ValidationSummary />
 
         <MudGrid Class="d-flex align-center">
+            <MudItem xs="12">
+                <MudTextField Label="Id" @bind-Value="Role.Id" ReadOnly="!IsAdd"></MudTextField>
+                <ValidationMessage For="@(() => Role.Id)" />
+            </MudItem>
 			<MudItem xs="12">
 			     <MudTextField Label="ConcurrencyStamp" @bind-Value="Role.ConcurrencyStamp"></MudTextField>
 			     <ValidationMessage For="@(() => Role.ConcurrencyStamp)" />
@@ -51,6 +54,7 @@
     /// </summary>
     [Parameter]
     public bool IsAdd { get; set; }
+
 
     /// <summary>
     /// The <see cref="Role"/> to upsert.

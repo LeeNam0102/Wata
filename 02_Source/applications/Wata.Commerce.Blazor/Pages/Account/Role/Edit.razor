@@ -1,10 +1,10 @@
-@page "/account/role/edit/{Id:string}"
-
-@using Wata.Commerce.Common.Helpers;
-@using Wata.Commerce.Common.Component;
-@using Wata.Commerce.Common.Objects;
-@using Wata.Commerce.Account.Module.Services;
+@page "/account/role/edit/{*Id}"
 @using Wata.Commerce.Account.Module.Models.Role;
+@using Wata.Commerce.Account.Module.Services;
+@using Wata.Commerce.Common.Component;
+@using Wata.Commerce.Common.Helpers;
+@using Wata.Commerce.Common.Objects;
+
 
 @inherits PageBase
 @inject IRoleService _roleService
@@ -24,7 +24,7 @@ else
     <RoleForm Busy="@Busy" Role="@Role"
                  IsAdd="false"
                  CancelRequest="Cancel"
-                 ValidationResult="@(async (bool success) => await ValidationResultAsync(success))" />
+                 ValidationResult="@(async (success) => await ValidationResultAsync(success))" />
 }
 
 @if (Error)
@@ -38,7 +38,7 @@ else
     /// Id of role to edit
     /// </summary>
     [Parameter]
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     /// <summary>
     /// Role being edited
@@ -48,7 +48,7 @@ else
     /// <summary>
     /// Avoid concurrent requests
     /// </summary>
-    private bool Busy;
+    private bool Busy; 
 
     /// <summary>
     /// An error occurred in the update
@@ -71,7 +71,7 @@ else
 
         try
         {
-            Role = await _roleService.GetRoleAsync(Id.ToString());
+            Role = await _roleService.GetRoleAsync(Id);
         }
         finally
         {

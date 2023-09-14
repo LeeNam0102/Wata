@@ -135,7 +135,7 @@
     /// </summary>
     private bool CanDelete => !DeleteConfirmation &&
     (Wrapper?.DeleteRequestId == 0 ||
-    Wrapper?.DeleteRequestId == CurrentUser?.Id);
+    Wrapper?.DeleteRequestId.ToString() == CurrentUser?.Id);
 
     /// <summary>
     /// Navigate to view.
@@ -177,7 +177,7 @@
         if (Wrapper?.DeleteRequestId == 0)
         {
             DeleteConfirmation = true;
-            await Wrapper.DeleteRequested.InvokeAsync(CurrentUser.Id);
+            await Wrapper.DeleteRequested.InvokeAsync(Int32.Parse(CurrentUser.Id));
         }
     }
 

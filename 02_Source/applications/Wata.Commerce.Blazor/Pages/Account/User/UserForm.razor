@@ -1,12 +1,14 @@
 @using Microsoft.AspNetCore.Components.Forms;
 @using Wata.Commerce.Account.Module.Models.User;
+@using Microsoft.AspNetCore.Components.Web
+@using System
 
 <h1>@Mode user</h1>
 <hr />
 @if (User is not null)
 {
-    <EditForm Model="@User"
-              OnInvalidSubmit="(async () => await HandleSubmitAsync(false))"
+    <EditForm Model="@User">
+         OnInvalidSubmit="(async () => await HandleSubmitAsync(false))"
               OnValidSubmit="(async () => await HandleSubmitAsync(true))">
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -25,11 +27,11 @@
 			     <ValidationMessage For="@(() => User.Email)" />
 			</MudItem>
 			<MudItem xs="12">
-			     <MudRadio Label="EmailConfirmed" @bind-Value="User.EmailConfirmed"></MudRadio>
+			     <MudRadio T="bool" Label="EmailConfirmed"  @bind-Value="User.EmailConfirmed"></MudRadio>
 			     <ValidationMessage For="@(() => User.EmailConfirmed)" />
 			</MudItem>
 			<MudItem xs="12">
-			     <MudRadio Label="LockoutEnabled" @bind-Value="User.LockoutEnabled"></MudRadio>
+			     <MudRadio T="bool"  Label="LockoutEnabled" @bind-Value="User.LockoutEnabled"></MudRadio>
 			     <ValidationMessage For="@(() => User.LockoutEnabled)" />
 			</MudItem>
 			<MudItem xs="12">
@@ -53,7 +55,7 @@
 			     <ValidationMessage For="@(() => User.PhoneNumber)" />
 			</MudItem>
 			<MudItem xs="12">
-			     <MudRadio Label="PhoneNumberConfirmed" @bind-Value="User.PhoneNumberConfirmed"></MudRadio>
+			     <MudRadio T="bool" Label="PhoneNumberConfirmed" @bind-Value="User.PhoneNumberConfirmed"></MudRadio>
 			     <ValidationMessage For="@(() => User.PhoneNumberConfirmed)" />
 			</MudItem>
 			<MudItem xs="12">
@@ -61,7 +63,7 @@
 			     <ValidationMessage For="@(() => User.SecurityStamp)" />
 			</MudItem>
 			<MudItem xs="12">
-			     <MudRadio Label="TwoFactorEnabled" @bind-Value="User.TwoFactorEnabled"></MudRadio>
+			     <MudRadio T="bool" Label="TwoFactorEnabled" @bind-Value="User.TwoFactorEnabled"></MudRadio>
 			     <ValidationMessage For="@(() => User.TwoFactorEnabled)" />
 			</MudItem>
 			<MudItem xs="12">
@@ -76,6 +78,8 @@
             </MudItem>
         </MudGrid>
     </EditForm>
+             
+   
 }
 @code {
     /// <summary>

@@ -1,20 +1,19 @@
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
-
 using MudBlazor.Services;
 using Blazored.Modal.Services;
 using Wata.Commerce.Common.Middlewares;
 using Wata.Commerce.Common.Helpers;
 using Wata.Commerce.Common.Objects;
-using Wata.Commerce.Common.Component.Services;
 
+using Wata.Commerce.Common.Component.Services;
 using Wata.Commerce.Sample.Client.Services;
 using Wata.Commerce.Sample.Module.Services;
-using Wata.Commerce.Sample.Module.Models.Abc;
 
+using Wata.Commerce.Sample.Module.Models.Abc;
 using Wata.Commerce.Account.Client.Services;
 using Wata.Commerce.Account.Module.Services;
 using Wata.Commerce.Account.Module.Models.Role;
-using Wata.Commerce.Account.Module.MapperProfiles;
+using Wata.Commerce.Sample.Module.MapperProfiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +27,10 @@ builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IModalService, ModalService>();
 builder.Services.AddScoped<SpinnerService>();
+builder.Services.AddMudServices();
 
-builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-//builder.Services.AddAutoMapper(typeof(Wata.Commerce.Sample.Module.MapperProfiles.AutoMapperProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(Wata.Commerce.Account.Module.MapperProfiles.AutoMapperProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 
 //Clients
 builder.Services.AddScoped<IAbcClient, AbcClient>();
@@ -49,8 +49,6 @@ builder.Services.AddScoped<EditSuccess>();
 // filters
 builder.Services.AddScoped<IAbcFilters, AbcGridControls>();
 builder.Services.AddScoped<IRoleFilters, RoleGridControls>();
-
-
 
 var app = builder.Build();
 
